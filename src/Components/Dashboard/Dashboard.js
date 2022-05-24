@@ -1,29 +1,40 @@
 import React from "react";
 import Chart from "Components/Common/Chart";
 import Table from "Components/Common/Table";
+import {HttpsAction} from '../../Services/httpsAction.js';
 import './Dashboard.css'
 
 const Dashboard = () =>{
     const [tableData, setTableData] = React.useState();
     const [chartData, setChartData] = React.useState();
-    const getTableData = () =>{
-        fetch('https://dummyjson.com/products?skip=20&limit=40')
+    const getTableData = async () =>{
+        /** Get Table Data From API */
+        await HttpsAction({
+            url: 'https://dummyjson.com/products?skip=20&limit=40',
+            positiveCallBack: ({data}) => {
+                setTableData([...data.products]);
+            }
+        });
+
+        // await HttpsAction({
+        //     url: 'https://gw.alipayobjects.com/os/antvdemo/assets/data/diamond.json',
+        //     headers :{
+        //         "Access-Control-Allow-Origin": "http://localhost:3000/"
+        //     },
+        //     positiveCallBack: ({data}) => {
+        //         setChartData(data);
+        //     }
+        // });
+        /** Get Chart Data From API */
+        fetch('https://gw.alipayobjects.com/os/antvdemo/assets/data/diamond.json')
             .then(res => res.json())
             .then(data => {
-                console.log("data of Table",data)
-                setTableData([...data.products]);
+                setChartData(data);
             })
-        // fetch('https://gw.alipayobjects.com/os/antvdemo/assets/data/diamond.json')
-        // // fetch(' https://dummyjson.com/products?skip=20&limit=10')
-        //     .then(res => res.json())
-        //     .then(data => {
-        //         console.log("--------chart api in dashboard")
-        //         setChartData(data);
-        //     })
     }
 
     React.useEffect(()=>{
-        getTableData();
+        (async ()=>await getTableData())();
     },[]);
 
     return(
@@ -66,13 +77,9 @@ const Dashboard = () =>{
                             // description: 'This column has a value getter and is not sortable.',
                             sortable: false,
                             width: 200,
-                            // valueGetter: (params) =>
-                            //     `${params.getValue(params.id, 'firstName') || ''} ${
-                            //         params.getValue(params.id, 'lastName') || ''
-                            //     }`,
                         },
                         {
-                            field: 'thumbnail ',
+                            field: 'thumbnail',
                             headerName: 'Thumbnail ',
                             width: 200,
                             editable: true,
