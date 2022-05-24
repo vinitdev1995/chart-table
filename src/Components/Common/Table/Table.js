@@ -7,6 +7,7 @@ const Table = ({columns,pageSize,...rest})=> {
     return (
         <div style={{ height: 400, width: '100%' }}>
             <DataGrid
+                AutoGenerateColumns="False"
                 rows={rest.rows || []}
                 columns={columns}
                 pageSize={pageSize || 10}

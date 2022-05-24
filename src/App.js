@@ -3,11 +3,11 @@ import Dashboard from "Components/Dashboard";
 
 
 function App() {
-  return (
-    <div className="App">
-    <Dashboard />
-    </div>
-  );
+    return (
+        <div className="App">
+            <Dashboard/>
+        </div>
+    );
 }
 
 export default App;
