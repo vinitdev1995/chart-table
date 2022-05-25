@@ -6,42 +6,44 @@ import './Dashboard.css'
 
 const Dashboard = () =>{
     const [tableData, setTableData] = React.useState();
-    const [chartData, setChartData] = React.useState();
+    const [reArrangedchartData, setReArrangedChartData] = React.useState();
     const getTableData = async () =>{
+
+        /** Get Chart Data From API */
         /** Get Table Data From API */
-        await HttpsAction({
-            url: 'https://dummyjson.com/products?skip=20&limit=40',
+        const data = await HttpsAction({
+            url: 'https://dummyjson.com/products?skip=0&limit=5400',
             positiveCallBack: ({data}) => {
                 setTableData([...data.products]);
+                return data.products
             }
         });
 
-        // await HttpsAction({
-        //     url: 'https://gw.alipayobjects.com/os/antvdemo/assets/data/diamond.json',
-        //     headers :{
-        //         "Access-Control-Allow-Origin": "http://localhost:3000/"
-        //     },
-        //     positiveCallBack: ({data}) => {
-        //         setChartData(data);
-        //     }
-        // });
-        /** Get Chart Data From API */
-        fetch('https://gw.alipayobjects.com/os/antvdemo/assets/data/diamond.json')
-            .then(res => res.json())
-            .then(data => {
-                setChartData(data);
-            })
+
+        /** Re-factor Data for chart */
+        let tempArray = data.map((item)=>{
+            let obj = {...item};
+            if( item.price >= 0 && item.price <= 499)  obj['range'] = '0-499';
+            if( item.price >= 500 && item.price <= 999)  obj['range'] = '500-999';
+            if( item.price >= 1000 && item.price <= 1499)  obj['range'] = '1000-1499';
+            if( item.price >= 1500 && item.price <= 2000)  obj['range'] = '1500-2000';
+            return obj;
+        })
+        setReArrangedChartData(tempArray);
     }
+
 
     React.useEffect(()=>{
         (async ()=>await getTableData())();
     },[]);
 
+
     return(
         <div className='Dashboard'>
-            <Chart chartData={chartData}/>
+            <Chart chartData={reArrangedchartData}/>
             <div style={{width:'100%'}}>
             <Table
+                height={600}
                 pageSize={10}
                 rows={tableData}
                 style={{width:'fit-content'}}
@@ -74,7 +76,6 @@ const Dashboard = () =>{
                         {
                             field: 'category',
                             headerName: 'Category',
-                            // description: 'This column has a value getter and is not sortable.',
                             sortable: false,
                             width: 200,
                         },
@@ -83,6 +84,7 @@ const Dashboard = () =>{
                             headerName: 'Thumbnail ',
                             width: 200,
                             editable: true,
+                            renderCell: (params) => <img src={params.value} height={100} style={{marginTop:'0.7rem', marginBottom: '0.7rem'}}/>,
                         },
                     ]
                 }

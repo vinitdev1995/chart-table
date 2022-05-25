@@ -24,7 +24,7 @@ const Charts = ({chartData}) =>{
             });
             chart.coordinate('polar');
             chart.legend(false);
-            chart.axis('clarity', {
+            chart.axis('range', {
                 grid: {
                     alignTick: false,
                     line: {
@@ -37,8 +37,8 @@ const Charts = ({chartData}) =>{
             chart
                 .point()
                 .adjust('jitter')
-                .position('clarity*type')
-                .color('clarity')
+                .position('range*1')
+                .color('range')
                 .shape('circle')
                 .style({
                     fillOpacity: 0.85,
